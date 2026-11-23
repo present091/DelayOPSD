@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "delayopsd"
+version = "0.1.0"
+description = "On-policy self-distillation for asynchronous action chunking (pi0.5 on LIBERO and a real YAM arm)"
+readme = "README.md"
+license = { text = "Apache-2.0" }
+requires-python = ">=3.12"
+dependencies = [
+    # LeRobot 2774d9b (2026-09-07, 0.6.2), the commit every result was produced with, plus one commit that gives
+    # SmolVLA the training-time RTC PI05 already has (github.com/present091/lerobot/tree/delayopsd); PI05 is untouched.
+    "lerobot[pi,smolvla,peft,libero] @ git+https://github.com/present091/lerobot.git@1f73bd4410658d0c6fb0d6a32b50bc391192137b",
+    # LIBERO results use MuJoCo 3.2.3: from 3.4.0 on, libero_spatial task 5's bowl no longer settles within LIBERO's
+    # wait steps (huggingface/lerobot#4390), which changes that task by >30 points.
+    "mujoco==3.2.3",
+    "pandas",
+]
+
+[project.optional-dependencies]
+# the robot-side inference server (real_robot/server)
+server = ["fastapi<1.0", "uvicorn", "json-numpy"]
+
+[tool.setuptools.packages.find]
+include = ["delayopsd*", "real_robot*"]
